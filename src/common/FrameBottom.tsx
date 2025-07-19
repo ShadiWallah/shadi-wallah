@@ -1,4 +1,4 @@
-import React from 'react'
+// import React from 'react'
 import leftFlower from './../assets/left-flower.png'
 import rightFlower from './../assets/right-flower.png'
 function FrameBottom() {

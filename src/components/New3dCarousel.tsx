@@ -43,23 +43,23 @@ const style5 = {
 };
 
 function New3dCarousel() {
-    const sectionRef = useRef(null)
-    const [activeIndex, setActiveIndex] = React.useState(0);
-    const currentInterevalRef = useRef(0)
+    const sectionRef = useRef<HTMLDivElement>(null);
+    const [ , setActiveIndex] = React.useState(0);
+    const currentInterevalRef = useRef<ReturnType<typeof setInterval> | null>(null);
     useEffect(()=>{
         const section = sectionRef.current
         currentInterevalRef.current = setInterval(()=>{
          setActiveIndex((prevIndex)=>{
-            const totalSlides = [...section.children].filter(element => element.tagName === 'INPUT').length
+            const totalSlides = section ? [...section.children].filter(element => element.tagName === 'INPUT').length : 0;
             // const nextIndex = (prevIndex + 1) % 5;
             const nextIndex = prevIndex === totalSlides - 1 ? 0 : prevIndex + 1;
-            [...section.children].filter(element => element.tagName === 'INPUT').forEach((element , index)=>{
-                const slide = document.getElementById(`slide${index+1}`)
+            section && [...section.children].filter(element => element.tagName === 'INPUT').forEach((element , index)=>{
+                // const slide = document.getElementById(`slide${index+1}`)
                 if(index===nextIndex){
-                    element.checked = true
+                    (element as HTMLInputElement).checked = true
                     // slide.classList.remove("opacity-0");
                 }else{
-                    element.checked = false
+                    (element as HTMLInputElement).checked = false
                     // slide.classList.add("opacity-0")
                 }
                 
@@ -67,7 +67,11 @@ function New3dCarousel() {
             return nextIndex;
          })
         },2500)
-        return ()=>clearInterval(currentInterevalRef.current)
+        return ()=> {
+            if (currentInterevalRef.current) {
+                clearInterval(currentInterevalRef.current);
+            }
+        }
     },[])
   return (
     <div className="">

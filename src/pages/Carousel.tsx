@@ -1,16 +1,16 @@
 import { useRef } from "react";
 
-export default function Carousel({ children }) {
-  const containerRef = useRef(null);
+export default function Carousel({ children } : {children: React.ReactNode }) {
+  const containerRef = useRef<HTMLDivElement>(null);
 
-  const scroll = (direction) => {
+  const scroll = (direction:string) => {
     const container = containerRef.current;
-    const width = container.offsetWidth;
+    const width = container?.offsetWidth ? container.offsetWidth : 0;
 
-    if (direction === "left") {
+    if (container && direction === "left") {
       container.scrollBy({ left: -width, behavior: "smooth" });
     } else {
-      container.scrollBy({ left: width, behavior: "smooth" });
+      container?.scrollBy({ left: width, behavior: "smooth" });
     }
   };
 

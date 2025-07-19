@@ -1,4 +1,4 @@
-import React from 'react'
+// import React from 'react'
 import leftCertain from './../assets/leftu-certain.png'
 import rightCertain from './../assets/right-certain.png'
 function Frame() {

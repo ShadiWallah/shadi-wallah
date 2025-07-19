@@ -2,14 +2,16 @@ import React, { useRef, useEffect } from "react";
 
 function CustomCarousel({ children }: { children: React.ReactNode }) {
   const [currentIndex, setCurrentIndex] = React.useState(0);
-  const carouselBoxRef = useRef(null);
-  let intervalRef = useRef(0);
+  const carouselBoxRef = useRef<HTMLDivElement>(null);
+  let intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   useEffect(() => {
     const { slides } = getCarouselSlides();
     slides[0].classList.add("opacity-100");
     carsouselStart();
-    return () => clearInterval(intervalRef.current);
+    return () => {
+      if (intervalRef.current) clearInterval(intervalRef.current);
+    };
   }, []);
 
   const carsouselStart = () => {
@@ -28,14 +30,18 @@ function CustomCarousel({ children }: { children: React.ReactNode }) {
   };
   const getCarouselSlides = () => {
     const carouselBox = carouselBoxRef.current;
-    if (!carouselBox) return [];
+    if (!carouselBox) return { slides: [], totalSlides: 0 };
     const slides = carouselBox.children;
     const totalSlides = slides.length;
     return { slides, totalSlides };
   };
-
+    if (intervalRef.current) clearInterval(intervalRef.current);
   const handlePrevious = () => {
-    clearInterval(intervalRef.current);
+    if (intervalRef.current !== null) {
+      if (intervalRef.current !== null) {
+        clearInterval(intervalRef.current as NodeJS.Timeout);
+      }
+    }
     const { slides, totalSlides } = getCarouselSlides();
     const newIndex = currentIndex === 0 ? totalSlides - 1 : currentIndex - 1;
     [...slides].forEach((slide, index) => {
@@ -48,7 +54,7 @@ function CustomCarousel({ children }: { children: React.ReactNode }) {
   };
 
   const handleNext = () => {
-    clearInterval(intervalRef.current);
+    clearInterval(intervalRef.current as NodeJS.Timeout);
     const { slides, totalSlides } = getCarouselSlides();
     const newIndex = currentIndex === totalSlides - 1 ? 0 : currentIndex + 1;
     [...slides].forEach((slide, index) => {
@@ -60,7 +66,7 @@ function CustomCarousel({ children }: { children: React.ReactNode }) {
     carsouselStart();
   };
   const handlePointers = (indexDot:number)=>{
-    clearInterval(intervalRef.current);
+    clearInterval(intervalRef.current as NodeJS.Timeout);
     const { slides } = getCarouselSlides();
     [...slides].forEach((slide, index) => {
         index !== indexDot
@@ -75,7 +81,7 @@ function CustomCarousel({ children }: { children: React.ReactNode }) {
       <section
         className="relative w-3xl flex flex-col items-center"
         ref={carouselBoxRef}
-        onMouseEnter={() => clearInterval(intervalRef.current)}
+        onMouseEnter={() => clearInterval(intervalRef.current as NodeJS.Timeout)}
         onMouseLeave={() => carsouselStart()}
       >
         {children}
@@ -93,9 +99,9 @@ function CustomCarousel({ children }: { children: React.ReactNode }) {
         Next{">"}
       </button>
       {currentIndex}
-      {Array.from(children)?.length > 0 ? (
+      {React.Children.toArray(children).length > 0 ? (
         <div className="absolute top-90 left-1/2 transform -translate-x-1/2 flex gap-4">
-          {Array.from(children).map((_, index) => {
+          {React.Children.toArray(children).map((_, index) => {
             return <span key={index} className={`p-1 rounded-full ${index===currentIndex ?'bg-grape': 'bg-black'}`}
             onClick={()=>handlePointers(index)}
             ></span>;
